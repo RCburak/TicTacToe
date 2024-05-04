@@ -1,9 +1,10 @@
-// ignore_for_file: use_super_parameters, library_private_types_in_public_api, avoid_print, use_build_context_synchronously
+// ignore_for_file: use_super_parameters, library_private_types_in_public_api, use_build_context_synchronously, avoid_print, use_rethrow_when_possible
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:proje1/loginpage.dart'; // loginpage import edildi
+import 'package:proje1/loginpage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,6 +49,7 @@ class SignUpForm extends StatefulWidget {
 }
 
 class _SignUpFormState extends State<SignUpForm> {
+  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -62,7 +64,14 @@ class _SignUpFormState extends State<SignUpForm> {
             "assets/images/XOX.png",
             width: 200,
             height: 180,
-          ), // Resim eklendi
+          ),
+          TextField(
+            controller: _usernameController,
+            decoration: const InputDecoration(
+              labelText: 'Username',
+            ),
+          ),
+          const SizedBox(height: 20.0),
           TextField(
             controller: _emailController,
             decoration: const InputDecoration(
@@ -81,17 +90,19 @@ class _SignUpFormState extends State<SignUpForm> {
           ElevatedButton(
             onPressed: () async {
               try {
-                UserCredential userCredential =
-                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                  email: _emailController.text,
-                  password: _passwordController.text,
+                // Kullanıcının girdiği verileri al
+                String username = _usernameController.text;
+                String email = _emailController.text;
+                String password = _passwordController.text;
+
+                // Kullanıcıyı kaydet
+                await AuthService().registerUser(
+                  username: username,
+                  email: email,
+                  password: password,
                 );
-                print('User created: ${userCredential.user!.email}');
-                // Başarıyla kayıt olduktan sonra login sayfasına yönlendir
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                );
+
+                // Başarılı kayıt mesajını göster
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
@@ -109,6 +120,12 @@ class _SignUpFormState extends State<SignUpForm> {
                       ],
                     );
                   },
+                );
+
+                // Kayıt olduktan sonra giriş sayfasına yönlendir
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
                 );
               } catch (e) {
                 print('Error: $e');
@@ -137,5 +154,32 @@ class _SignUpFormState extends State<SignUpForm> {
         ],
       ),
     );
+  }
+}
+
+class AuthService {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final CollectionReference _usersCollection =
+      FirebaseFirestore.instance.collection('users');
+
+  Future<void> registerUser({
+    required String username,
+    required String email,
+    required String password,
+  }) async {
+    try {
+      UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(email: email, password: password);
+
+      // Firestore'a kullanıcı verilerini ekle
+      await _usersCollection.doc(userCredential.user!.uid).set({
+        'username': username,
+        'email': email,
+        // İhtiyaç duyarsanız buraya başka kullanıcı bilgilerini de ekleyebilirsiniz
+      });
+    } catch (e) {
+      print('Registration Error: $e');
+      throw e;
+    }
   }
 }
