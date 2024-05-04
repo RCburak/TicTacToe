@@ -89,53 +89,18 @@ class _SignUpFormState extends State<SignUpForm> {
           const SizedBox(height: 20.0),
           ElevatedButton(
             onPressed: () async {
-              try {
-                // Kullanıcının girdiği verileri al
-                String username = _usernameController.text;
-                String email = _emailController.text;
-                String password = _passwordController.text;
+              String username = _usernameController.text;
+              String email = _emailController.text;
+              String password = _passwordController.text;
 
-                // Kullanıcıyı kaydet
-                await AuthService().registerUser(
-                  username: username,
-                  email: email,
-                  password: password,
-                );
-
-                // Başarılı kayıt mesajını göster
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text('Successful'),
-                      content: const Text(
-                          'Your account has been created successfully.'),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text('OK'),
-                        ),
-                      ],
-                    );
-                  },
-                );
-
-                // Kayıt olduktan sonra giriş sayfasına yönlendir
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                );
-              } catch (e) {
-                print('Error: $e');
+              if (username.isEmpty || email.isEmpty || password.isEmpty) {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text('Try Again'),
-                      content:
-                          const Text('An error occurred. Please try again.'),
+                      content: const Text(
+                          'Username, email, and password cannot be empty.'),
                       actions: <Widget>[
                         TextButton(
                           onPressed: () {
@@ -147,6 +112,40 @@ class _SignUpFormState extends State<SignUpForm> {
                     );
                   },
                 );
+              } else {
+                try {
+                  await AuthService().registerUser(
+                    username: username,
+                    email: email,
+                    password: password,
+                  );
+
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Successful'),
+                        content: const Text(
+                            'Your account has been created successfully.'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                } catch (e) {
+                  print('Error: $e');
+                }
               }
             },
             child: const Text('Sign Up'),
@@ -167,19 +166,12 @@ class AuthService {
     required String email,
     required String password,
   }) async {
-    try {
-      UserCredential userCredential = await _auth
-          .createUserWithEmailAndPassword(email: email, password: password);
+    UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email, password: password);
 
-      // Firestore'a kullanıcı verilerini ekle
-      await _usersCollection.doc(userCredential.user!.uid).set({
-        'username': username,
-        'email': email,
-        // İhtiyaç duyarsanız buraya başka kullanıcı bilgilerini de ekleyebilirsiniz
-      });
-    } catch (e) {
-      print('Registration Error: $e');
-      throw e;
-    }
+    await _usersCollection.doc(userCredential.user!.uid).set({
+      'username': username,
+      'email': email,
+    });
   }
 }
