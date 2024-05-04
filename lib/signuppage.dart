@@ -1,4 +1,4 @@
-// ignore_for_file: use_super_parameters, library_private_types_in_public_api, use_build_context_synchronously, avoid_print, use_rethrow_when_possible
+// ignore_for_file: use_super_parameters, library_private_types_in_public_api, use_build_context_synchronously, avoid_print, use_rethrow_when_possible, unused_local_variable, unused_field
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -114,12 +114,17 @@ class _SignUpFormState extends State<SignUpForm> {
                 );
               } else {
                 try {
+                  // user kaydet
+                  UserCredential userCredential = await FirebaseAuth.instance
+                      .createUserWithEmailAndPassword(
+                          email: email, password: password);
+
+                  // user başarıyla kaydedildiyse
+                  // user bilgilerini Firestore'a kaydet
                   await AuthService().registerUser(
                     username: username,
                     email: email,
-                    password: password,
                   );
-
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
@@ -131,6 +136,11 @@ class _SignUpFormState extends State<SignUpForm> {
                           TextButton(
                             onPressed: () {
                               Navigator.of(context).pop();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const LoginPage()),
+                              );
                             },
                             child: const Text('OK'),
                           ),
@@ -138,13 +148,30 @@ class _SignUpFormState extends State<SignUpForm> {
                       );
                     },
                   );
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
-                  );
-                } catch (e) {
-                  print('Error: $e');
+                } on FirebaseAuthException catch (e) {
+                  // FirebaseAuthException'dan gelen hata koduna göre
+                  // Doğru hata mesajını göster
+                  if (e.code == 'email-already-in-use') {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Try Again'),
+                          content: const Text('E-mail already in use.'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  } else {
+                    print('Error: $e');
+                  }
                 }
               }
             },
@@ -164,12 +191,8 @@ class AuthService {
   Future<void> registerUser({
     required String username,
     required String email,
-    required String password,
   }) async {
-    UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email, password: password);
-
-    await _usersCollection.doc(userCredential.user!.uid).set({
+    await _usersCollection.doc().set({
       'username': username,
       'email': email,
     });
