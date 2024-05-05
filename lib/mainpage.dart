@@ -34,11 +34,13 @@ class mainpageScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('XOX'),
+        backgroundColor: const Color.fromARGB(255, 167, 162, 162),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.logout),
+            color: const Color.fromARGB(255, 0, 0, 0),
             onPressed: () {
-              // Çıkış işlemleri
+              // Çıkış
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const HomePage()),
@@ -47,7 +49,7 @@ class mainpageScreen extends StatelessWidget {
           ),
         ],
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: const Color.fromARGB(255, 167, 162, 162),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
@@ -85,7 +87,7 @@ class mainpageScreen extends StatelessWidget {
                           Text(
                             '1000', // Buraya kullanıcının kazandığı puanları dinamik olarak ekleyebilirsiniz
                             style: TextStyle(
-                              fontSize: 40.0, // Yazı boyutunu 24'e ayarladık
+                              fontSize: 40.0,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -116,8 +118,7 @@ class mainpageScreen extends StatelessWidget {
                 ),
                 child: const Text(
                   '1 Player',
-                  style:
-                      TextStyle(fontSize: 18.0), // Yazı boyutunu 18'e ayarladık
+                  style: TextStyle(fontSize: 18.0),
                 ),
               ),
               const SizedBox(width: 20),
@@ -136,8 +137,7 @@ class mainpageScreen extends StatelessWidget {
                 ),
                 child: const Text(
                   '2 Player',
-                  style:
-                      TextStyle(fontSize: 18.0), // Yazı boyutunu 18'e ayarladık
+                  style: TextStyle(fontSize: 18.0),
                 ),
               ),
             ],
