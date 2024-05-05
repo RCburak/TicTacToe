@@ -37,8 +37,8 @@ class HomePage extends StatelessWidget {
           );
         },
         style: ElevatedButton.styleFrom(
-          foregroundColor: Color.fromARGB(255, 0, 0, 0),
-          backgroundColor: Color.fromARGB(255, 234, 226, 226),
+          foregroundColor: const Color.fromARGB(255, 0, 0, 0),
+          backgroundColor: const Color.fromARGB(255, 234, 226, 226),
           minimumSize: const Size(150, 50),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         ),
@@ -53,8 +53,8 @@ class HomePage extends StatelessWidget {
           );
         },
         style: ElevatedButton.styleFrom(
-          foregroundColor: Color.fromARGB(255, 0, 0, 0),
-          backgroundColor: Color.fromARGB(255, 234, 226, 226),
+          foregroundColor: const Color.fromARGB(255, 0, 0, 0),
+          backgroundColor: const Color.fromARGB(255, 234, 226, 226),
           minimumSize: const Size(150, 50),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         ),

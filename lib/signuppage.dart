@@ -180,8 +180,8 @@ class _SignUpFormState extends State<SignUpForm> {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.all(20),
               minimumSize: const Size(150, 50),
-              foregroundColor: Color.fromARGB(255, 0, 0, 0),
-              backgroundColor: Color.fromARGB(255, 234, 226, 226),
+              foregroundColor: const Color.fromARGB(255, 0, 0, 0),
+              backgroundColor: const Color.fromARGB(255, 234, 226, 226),
             ),
             child: const Text('Sign Up'),
           ),

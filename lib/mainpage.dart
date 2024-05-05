@@ -115,8 +115,8 @@ class mainpageScreen extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.all(20),
                   minimumSize: const Size(150, 50),
-                  foregroundColor: Color.fromARGB(255, 0, 0, 0),
-                  backgroundColor: Color.fromARGB(255, 234, 226, 226),
+                  foregroundColor: const Color.fromARGB(255, 0, 0, 0),
+                  backgroundColor: const Color.fromARGB(255, 234, 226, 226),
                 ),
                 child: const Text(
                   '1 Player',
@@ -136,8 +136,8 @@ class mainpageScreen extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.all(20),
                   minimumSize: const Size(150, 50),
-                  foregroundColor: Color.fromARGB(255, 0, 0, 0),
-                  backgroundColor: Color.fromARGB(255, 234, 226, 226),
+                  foregroundColor: const Color.fromARGB(255, 0, 0, 0),
+                  backgroundColor: const Color.fromARGB(255, 234, 226, 226),
                 ),
                 child: const Text(
                   '2 Player',
@@ -158,7 +158,7 @@ class mainpageScreen extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.all(20),
               shape: const CircleBorder(),
-              backgroundColor: Color.fromARGB(255, 234, 226, 226),
+              backgroundColor: const Color.fromARGB(255, 234, 226, 226),
             ),
             child: const Icon(
               Icons.arrow_forward,
