@@ -1,4 +1,4 @@
-// ignore_for_file: use_super_parameters, prefer_const_constructors, library_private_types_in_public_api, avoid_print, use_build_context_synchronously, unused_import
+// ignore_for_file: unused_import, use_super_parameters, library_private_types_in_public_api, avoid_print, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,13 +18,15 @@ class LoginPage extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Login Page'),
+          backgroundColor: const Color.fromARGB(255, 177, 173, 173),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.of(context).pop();
             },
           ),
         ),
+        backgroundColor: const Color.fromARGB(255, 167, 162, 162),
         body: const LoginForm(),
       ),
     );
@@ -63,9 +65,26 @@ class _LoginFormState extends State<LoginForm> {
       );
       print('User logged in: ${userCredential.user!.email}');
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const mainpage()),
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Successful'),
+            content: const Text('You have successfully logged in.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const mainpage()),
+                  );
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
       );
     } catch (e) {
       showDialog(
@@ -121,8 +140,8 @@ class _LoginFormState extends State<LoginForm> {
           ElevatedButton(
             onPressed: _login,
             style: ElevatedButton.styleFrom(
-              foregroundColor: const Color.fromARGB(255, 77, 105, 196),
-              backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+              foregroundColor: const Color.fromARGB(255, 0, 0, 0),
+              backgroundColor: const Color.fromARGB(255, 234, 226, 226),
               minimumSize: const Size(150, 50),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             ),
