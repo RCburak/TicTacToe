@@ -1,4 +1,4 @@
-// ignore_for_file: use_super_parameters, prefer_const_constructors, library_private_types_in_public_api, avoid_print, use_build_context_synchronously
+// ignore_for_file: use_super_parameters, prefer_const_constructors, library_private_types_in_public_api, avoid_print, use_build_context_synchronously, unused_import
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -41,8 +41,20 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  String? _emailError;
+  String? _passwordError;
 
   Future<void> _login() async {
+    setState(() {
+      _emailError =
+          _emailController.text.isEmpty ? 'Email field is required.' : null;
+      _passwordError = _passwordController.text.isEmpty
+          ? 'Password field is required.'
+          : null;
+    });
+
+    if (_emailError != null || _passwordError != null) return;
+
     try {
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -51,26 +63,17 @@ class _LoginFormState extends State<LoginForm> {
       );
       print('User logged in: ${userCredential.user!.email}');
 
-      // Kullanıcı başarıyla giriş yaptığında mainpage sayfasına yönlendir
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const mainpage()),
       );
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        Fluttertoast.showToast(msg: 'Kullanıcı bulunamadı.');
-      } else if (e.code == 'wrong-password') {
-        Fluttertoast.showToast(msg: 'Yanlış şifre.');
-      } else {
-        Fluttertoast.showToast(msg: 'Hata: ${e.message}');
-      }
-
+    } catch (e) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('Try Again'),
-            content: const Text('An error occurred. Please try again.'),
+            content: const Text('Check your E-mail and Password.'),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
@@ -83,6 +86,7 @@ class _LoginFormState extends State<LoginForm> {
         },
       );
     }
+    setState(() {});
   }
 
   @override
@@ -99,16 +103,18 @@ class _LoginFormState extends State<LoginForm> {
           ),
           TextField(
             controller: _emailController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Email',
+              errorText: _emailError,
             ),
           ),
           const SizedBox(height: 25.0),
           TextField(
             controller: _passwordController,
             obscureText: true,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Password',
+              errorText: _passwordError,
             ),
           ),
           const SizedBox(height: 25.0),
