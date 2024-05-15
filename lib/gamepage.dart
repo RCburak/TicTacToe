@@ -1,5 +1,4 @@
-// ignore_for_file: use_super_parameters, library_private_types_in_public_api, unused_element
-
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
@@ -35,6 +34,8 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
   int _teamOScore = 0;
   int _boardSize = 3;
   late ConfettiController _confettiController;
+  int _moveTimeInSeconds = 10;
+  late Timer _timer;
 
   @override
   void initState() {
@@ -42,12 +43,28 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
     _initializeBoard();
     _confettiController =
         ConfettiController(duration: const Duration(seconds: 5));
+    _startTimer();
   }
 
   @override
   void dispose() {
     _confettiController.dispose();
+    _timer.cancel(); // Timer'ı iptal et
     super.dispose();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_moveTimeInSeconds > 0) {
+          _moveTimeInSeconds--;
+        } else {
+          // Zaman dolduğunda otomatik olarak sırayı değiştir
+          _isXNext = !_isXNext;
+          _moveTimeInSeconds = 10; // Yeni bir zaman başlat
+        }
+      });
+    });
   }
 
   void _initializeBoard() {
@@ -84,6 +101,7 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
       setState(() {
         _board[row][col] = _isXNext ? '❌' : '⭕';
         _isXNext = !_isXNext;
+        _moveTimeInSeconds = 10; // Hamle yapıldığında zamanı sıfırla
       });
       _checkWinner();
     }
@@ -199,6 +217,10 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
               Text(
                 'X: $_teamXScore  O: $_teamOScore',
                 style: const TextStyle(fontSize: 24),
+              ),
+              Text(
+                'Time left: $_moveTimeInSeconds seconds',
+                style: const TextStyle(fontSize: 16),
               ),
               GridView.builder(
                 shrinkWrap: true,
