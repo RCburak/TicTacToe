@@ -1,5 +1,4 @@
-// ignore_for_file: use_super_parameters, library_private_types_in_public_api, unused_element
-
+// ignore_for_file: use_super_parameters, library_private_types_in_public_api, unused_import
 import 'package:flutter/material.dart';
 import 'package:proje1/mainpage.dart';
 
@@ -71,7 +70,7 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
   void _markCell(int row, int col) {
     if (_board[row][col] == '') {
       setState(() {
-        _board[row][col] = _isXNext ? 'X' : 'O';
+        _board[row][col] = _isXNext ? '❌' : '⭕';
         _isXNext = !_isXNext;
       });
       _checkWinner();
@@ -162,6 +161,46 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
     }
   }
 
+  Widget buildBoard() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          'X: $_teamXScore  O: $_teamOScore',
+          style: const TextStyle(fontSize: 24),
+        ),
+        GridView.builder(
+          shrinkWrap: true,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: _boardSize,
+          ),
+          itemCount: _boardSize * _boardSize,
+          itemBuilder: (context, index) {
+            int row = index ~/ _boardSize;
+            int col = index % _boardSize;
+            return GestureDetector(
+              onTap: () => _markCell(row, col),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                      color: Colors.yellow), // Kenarlık rengini sarı yap
+                  borderRadius:
+                      BorderRadius.circular(10), // Kareleri yuvarlak yap
+                ),
+                child: Center(
+                  child: Text(
+                    _board[row][col],
+                    style: const TextStyle(fontSize: 40.0),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -179,40 +218,9 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
           ),
         ],
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'X: $_teamXScore  O: $_teamOScore',
-            style: const TextStyle(fontSize: 24),
-          ),
-          GridView.builder(
-            shrinkWrap: true,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: _boardSize,
-            ),
-            itemCount: _boardSize * _boardSize,
-            itemBuilder: (context, index) {
-              int row = index ~/ _boardSize;
-              int col = index % _boardSize;
-              return GestureDetector(
-                onTap: () => _markCell(row, col),
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black),
-                  ),
-                  child: Center(
-                    child: Text(
-                      _board[row][col],
-                      style: const TextStyle(fontSize: 40.0),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
+      backgroundColor:
+          Colors.grey[200], // Arka plan rengini gri tonlarında ayarla
+      body: buildBoard(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _resetBoard();

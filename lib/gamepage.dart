@@ -71,7 +71,7 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
   void _markCell(int row, int col) {
     if (_board[row][col] == '') {
       setState(() {
-        _board[row][col] = _isXNext ? 'X' : 'O';
+        _board[row][col] = _isXNext ? '❌' : '⭕';
         _isXNext = !_isXNext;
       });
       _checkWinner();

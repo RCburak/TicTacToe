@@ -1,4 +1,4 @@
-// ignore_for_file: use_super_parameters, library_private_types_in_public_api, use_build_context_synchronously, avoid_print, use_rethrow_when_possible, unused_local_variable, unused_field
+// ignore_for_file: unused_local_variable, unused_field, use_super_parameters, library_private_types_in_public_api, use_build_context_synchronously, avoid_print
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -54,6 +54,15 @@ class _SignUpFormState extends State<SignUpForm> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isPasswordVisible = false;
+  String? _passwordError;
+
+  bool _validatePassword(String password) {
+    // Updated regex pattern for better special character handling
+    String pattern = r'^(?=.*[A-Z])(?=.*[!@#\$&*~]).{6,}$';
+    RegExp regex = RegExp(pattern);
+    return regex.hasMatch(password);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,9 +92,20 @@ class _SignUpFormState extends State<SignUpForm> {
           const SizedBox(height: 20.0),
           TextField(
             controller: _passwordController,
-            obscureText: true,
-            decoration: const InputDecoration(
+            obscureText: !_isPasswordVisible,
+            decoration: InputDecoration(
               labelText: 'Password',
+              errorText: _passwordError,
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _isPasswordVisible = !_isPasswordVisible;
+                  });
+                },
+              ),
             ),
           ),
           const SizedBox(height: 20.0),
@@ -95,14 +115,25 @@ class _SignUpFormState extends State<SignUpForm> {
               String email = _emailController.text;
               String password = _passwordController.text;
 
-              if (username.isEmpty || email.isEmpty || password.isEmpty) {
+              setState(() {
+                if (password.isEmpty) {
+                  _passwordError = 'Password field is required.';
+                } else if (!_validatePassword(password)) {
+                  _passwordError =
+                      'Password must be at least 6 characters long, include an uppercase letter and a special character.';
+                } else {
+                  _passwordError = null;
+                }
+              });
+
+              if (username.isEmpty || email.isEmpty || _passwordError != null) {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text('Try Again'),
                       content: const Text(
-                          'Username, email, and password cannot be empty.'),
+                          'Username, email, and password cannot be empty, and password must meet the criteria.'),
                       actions: <Widget>[
                         TextButton(
                           onPressed: () {
@@ -116,13 +147,12 @@ class _SignUpFormState extends State<SignUpForm> {
                 );
               } else {
                 try {
-                  // user kaydet
+                  // User registration
                   UserCredential userCredential = await FirebaseAuth.instance
                       .createUserWithEmailAndPassword(
                           email: email, password: password);
 
-                  // user başarıyla kaydedildiyse
-                  // user bilgilerini Firestore'a kaydet
+                  // Save user information to Firestore
                   await AuthService().registerUser(
                     username: username,
                     email: email,
@@ -151,29 +181,38 @@ class _SignUpFormState extends State<SignUpForm> {
                     },
                   );
                 } on FirebaseAuthException catch (e) {
-                  // FirebaseAuthException'dan gelen hata koduna göre
-                  // Doğru hata mesajını göster
+                  // Handle specific Firebase exceptions
+                  String errorMessage;
                   if (e.code == 'email-already-in-use') {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Try Again'),
-                          content: const Text('E-mail already in use.'),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
+                    errorMessage = 'E-mail already in use.';
+                  } else if (e.code == 'invalid-email') {
+                    errorMessage = 'Invalid email address.';
+                  } else if (e.code == 'operation-not-allowed') {
+                    errorMessage = 'Email/password accounts are not enabled.';
+                  } else if (e.code == 'weak-password') {
+                    errorMessage = 'Password is too weak.';
                   } else {
-                    print('Error: $e');
+                    errorMessage = 'An error occurred. Please try again.';
                   }
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Try Again'),
+                        content: Text(errorMessage),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } catch (e) {
+                  print('Error: $e');
                 }
               }
             },

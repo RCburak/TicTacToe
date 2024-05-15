@@ -45,6 +45,13 @@ class _LoginFormState extends State<LoginForm> {
   final TextEditingController _passwordController = TextEditingController();
   String? _emailError;
   String? _passwordError;
+  bool _isPasswordVisible = false;
+
+  bool _validatePassword(String password) {
+    String pattern = r'^(?=.*[A-Z])(?=.*[!@#\$&*~]).{6,}$';
+    RegExp regex = RegExp(pattern);
+    return regex.hasMatch(password);
+  }
 
   Future<void> _login() async {
     setState(() {
@@ -53,6 +60,12 @@ class _LoginFormState extends State<LoginForm> {
       _passwordError = _passwordController.text.isEmpty
           ? 'Password field is required.'
           : null;
+
+      if (_passwordError == null &&
+          !_validatePassword(_passwordController.text)) {
+        _passwordError =
+            'You entered the password incorrectly. Please try again.';
+      }
     });
 
     if (_emailError != null || _passwordError != null) return;
@@ -108,6 +121,58 @@ class _LoginFormState extends State<LoginForm> {
     setState(() {});
   }
 
+  Future<void> _resetPassword() async {
+    if (_emailController.text.isEmpty) {
+      setState(() {
+        _emailError = 'Email field is required.';
+      });
+      return;
+    }
+
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(
+        email: _emailController.text,
+      );
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Password Reset'),
+            content: const Text(
+                'A password reset link has been sent to your email.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Error'),
+            content: const Text(
+                'Failed to send password reset email. Please check your email and try again.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -130,10 +195,20 @@ class _LoginFormState extends State<LoginForm> {
           const SizedBox(height: 25.0),
           TextField(
             controller: _passwordController,
-            obscureText: true,
+            obscureText: !_isPasswordVisible,
             decoration: InputDecoration(
               labelText: 'Password',
               errorText: _passwordError,
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _isPasswordVisible = !_isPasswordVisible;
+                  });
+                },
+              ),
             ),
           ),
           const SizedBox(height: 25.0),
@@ -146,6 +221,14 @@ class _LoginFormState extends State<LoginForm> {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             ),
             child: const Text('Login'),
+          ),
+          const SizedBox(height: 10.0),
+          TextButton(
+            onPressed: _resetPassword,
+            child: const Text(
+              'Forgot Password?',
+              style: TextStyle(color: Colors.blue),
+            ),
           ),
         ],
       ),
