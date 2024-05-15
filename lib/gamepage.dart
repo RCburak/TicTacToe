@@ -1,6 +1,8 @@
 // ignore_for_file: use_super_parameters, library_private_types_in_public_api, unused_element
 
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:confetti/confetti.dart';
 import 'package:proje1/mainpage.dart';
 
 void main() {
@@ -32,11 +34,20 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
   int _teamXScore = 0;
   int _teamOScore = 0;
   int _boardSize = 3;
+  late ConfettiController _confettiController;
 
   @override
   void initState() {
     super.initState();
     _initializeBoard();
+    _confettiController =
+        ConfettiController(duration: const Duration(seconds: 5));
+  }
+
+  @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
   }
 
   void _initializeBoard() {
@@ -82,6 +93,7 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
     if (_checkRow() || _checkColumn() || _checkDiagonal()) {
       String winner = _isXNext ? 'O' : 'X';
       _updateScore(winner);
+      _confettiController.play(); // Konfeti başlat
       _resetBoard2();
     } else if (_checkDraw()) {
       _increaseBoardSize();
@@ -179,37 +191,54 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
           ),
         ],
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      body: Stack(
         children: [
-          Text(
-            'X: $_teamXScore  O: $_teamOScore',
-            style: const TextStyle(fontSize: 24),
-          ),
-          GridView.builder(
-            shrinkWrap: true,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: _boardSize,
-            ),
-            itemCount: _boardSize * _boardSize,
-            itemBuilder: (context, index) {
-              int row = index ~/ _boardSize;
-              int col = index % _boardSize;
-              return GestureDetector(
-                onTap: () => _markCell(row, col),
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black),
-                  ),
-                  child: Center(
-                    child: Text(
-                      _board[row][col],
-                      style: const TextStyle(fontSize: 40.0),
-                    ),
-                  ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'X: $_teamXScore  O: $_teamOScore',
+                style: const TextStyle(fontSize: 24),
+              ),
+              GridView.builder(
+                shrinkWrap: true,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: _boardSize,
                 ),
-              );
-            },
+                itemCount: _boardSize * _boardSize,
+                itemBuilder: (context, index) {
+                  int row = index ~/ _boardSize;
+                  int col = index % _boardSize;
+                  return GestureDetector(
+                    onTap: () => _markCell(row, col),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                            color: Colors.yellow), // Kenarlık rengini sarı yap
+                        borderRadius:
+                            BorderRadius.circular(10), // Kareleri yuvarlak yap
+                      ),
+                      child: Center(
+                        child: Text(
+                          _board[row][col],
+                          style: const TextStyle(fontSize: 40.0),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: ConfettiWidget(
+              confettiController: _confettiController,
+              blastDirection: pi / 2,
+              emissionFrequency: 0.05,
+              numberOfParticles: 20,
+              gravity: 0.05,
+            ),
           ),
         ],
       ),

@@ -1,5 +1,6 @@
-// ignore_for_file: use_super_parameters, library_private_types_in_public_api, unused_import
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:confetti/confetti.dart';
 import 'package:proje1/mainpage.dart';
 
 void main() {
@@ -31,11 +32,20 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
   int _teamXScore = 0;
   int _teamOScore = 0;
   int _boardSize = 3;
+  late ConfettiController _confettiController;
 
   @override
   void initState() {
     super.initState();
     _initializeBoard();
+    _confettiController =
+        ConfettiController(duration: const Duration(seconds: 3));
+  }
+
+  @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
   }
 
   void _initializeBoard() {
@@ -81,6 +91,7 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
     if (_checkRow() || _checkColumn() || _checkDiagonal()) {
       String winner = _isXNext ? 'O' : 'X';
       _updateScore(winner);
+      _confettiController.play();
       _resetBoard2();
     } else if (_checkDraw()) {
       _increaseBoardSize();
@@ -220,7 +231,18 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
       ),
       backgroundColor:
           Colors.grey[200], // Arka plan rengini gri tonlarında ayarla
-      body: buildBoard(),
+      body: Stack(
+        children: [
+          buildBoard(),
+          ConfettiWidget(
+            confettiController: _confettiController,
+            blastDirection: -pi / 2,
+            emissionFrequency: 0.05,
+            numberOfParticles: 20,
+            gravity: 0.05,
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _resetBoard();
