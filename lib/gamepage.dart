@@ -1,3 +1,5 @@
+// ignore_for_file: use_super_parameters, library_private_types_in_public_api, unused_element
+
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -54,7 +56,7 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         if (_moveTimeInSeconds > 0) {
           _moveTimeInSeconds--;
