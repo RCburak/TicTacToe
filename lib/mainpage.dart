@@ -1,4 +1,4 @@
-// ignore_for_file: use_super_parameters, camel_case_types, unnecessary_const
+// ignore_for_file: use_super_parameters, camel_case_types
 
 import 'package:flutter/material.dart';
 import 'package:proje1/gamepage.dart';
@@ -40,9 +40,12 @@ class mainpage extends StatelessWidget {
         ),
         Scaffold(
           appBar: AppBar(
+            leading: const BackButton(
+              color: Color.fromARGB(255, 233, 244, 30),
+            ),
             title: const Text('XOX',
                 style: TextStyle(
-                  color: const Color.fromARGB(255, 233, 244, 30),
+                  color: Color.fromARGB(255, 233, 244, 30),
                 )),
             backgroundColor: Colors.transparent,
             elevation: 0,
@@ -63,19 +66,34 @@ class mainpage extends StatelessWidget {
           body: Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                _buildProfileSection(),
-                const Spacer(),
-                _buildGameButtons(context),
-                const Spacer(flex: 2),
+            child: Stack(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    _buildProfileSection(),
+                    const Spacer(),
+                    _buildGameButtons(context),
+                    const Spacer(flex: 2),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: Image.asset(
+                        "assets/images/XOX.png",
+                        width: 70,
+                        height: 70,
+                      ),
+                    ),
+                  ],
+                ),
                 Align(
-                  alignment: Alignment.bottomRight,
-                  child: Image.asset(
-                    "assets/images/XOX.png",
-                    width: 70,
-                    height: 70,
+                  alignment: Alignment.bottomLeft,
+                  child: IconButton(
+                    icon: const Icon(Icons.settings),
+                    color: Colors.grey.shade200,
+                    iconSize: 40,
+                    onPressed: () {
+                      _showSettingsSheet(context);
+                    },
                   ),
                 ),
               ],
@@ -83,6 +101,33 @@ class mainpage extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  void _showSettingsSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 200,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade200,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: Center(
+            child: IconButton(
+              icon: const Icon(Icons.music_note),
+              iconSize: 50,
+              onPressed: () {
+                // Müzik simgeli butona tıklanınca yapılacaklar
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 
