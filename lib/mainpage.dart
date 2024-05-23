@@ -1,4 +1,4 @@
-// ignore_for_file: use_super_parameters, camel_case_types
+// ignore_for_file: use_super_parameters, camel_case_types, unnecessary_const
 
 import 'package:flutter/material.dart';
 import 'package:proje1/gamepage.dart';
@@ -32,24 +32,24 @@ class mainpage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        // Arka plan resmi
         Positioned.fill(
           child: Image.asset(
-            "assets/images/XOX1.gif",
+            "assets/images/xoxo1.gif",
             fit: BoxFit.cover,
           ),
         ),
-        // Diğer widget'lar
         Scaffold(
           appBar: AppBar(
-            title: const Text('XOX', style: TextStyle(color: Colors.black)),
-            backgroundColor:
-                Colors.transparent, // Arka plana uyum sağlaması için
+            title: const Text('XOX',
+                style: TextStyle(
+                  color: const Color.fromARGB(255, 233, 244, 30),
+                )),
+            backgroundColor: Colors.transparent,
             elevation: 0,
             actions: <Widget>[
               IconButton(
                 icon: const Icon(Icons.logout),
-                color: Colors.black,
+                color: const Color.fromARGB(255, 233, 244, 30),
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
@@ -59,7 +59,7 @@ class mainpage extends StatelessWidget {
               ),
             ],
           ),
-          backgroundColor: Colors.transparent, // Arka plana uyum sağlaması için
+          backgroundColor: Colors.transparent,
           body: Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
@@ -157,7 +157,7 @@ class mainpage extends StatelessWidget {
           child: const Icon(
             Icons.arrow_forward,
             size: 40,
-            color: Colors.black,
+            color: Color.fromARGB(255, 0, 0, 0),
           ),
         ),
       ],
