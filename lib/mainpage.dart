@@ -1,4 +1,4 @@
-// ignore_for_file: camel_case_types, use_super_parameters
+// ignore_for_file: use_super_parameters, camel_case_types
 
 import 'package:flutter/material.dart';
 import 'package:proje1/gamepage.dart';
@@ -6,11 +6,11 @@ import 'package:proje1/gamepage2.dart';
 import 'package:proje1/homepage.dart';
 
 void main() {
-  runApp(const mainpage());
+  runApp(const MainPage());
 }
 
-class mainpage extends StatelessWidget {
-  const mainpage({Key? key}) : super(key: key);
+class MainPage extends StatelessWidget {
+  const MainPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,13 +20,13 @@ class mainpage extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const MainPageScreen(),
+      home: const mainpage(),
     );
   }
 }
 
-class MainPageScreen extends StatelessWidget {
-  const MainPageScreen({Key? key}) : super(key: key);
+class mainpage extends StatelessWidget {
+  const mainpage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
