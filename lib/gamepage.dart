@@ -1,3 +1,5 @@
+// ignore_for_file: use_super_parameters, library_private_types_in_public_api, unused_element
+
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -49,7 +51,7 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
   @override
   void dispose() {
     _confettiController.dispose();
-    _timer.cancel(); // Timer'ı iptal et
+    _timer.cancel();
     super.dispose();
   }
 
@@ -109,12 +111,8 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
   }
 
   void _aiMove() {
-    // Öncelikli olarak, yapay zeka kazanabileceği bir hamle yapmaya çalışır
     if (!_makeWinningMove()) {
-      // Sonrasında, rakibin kazanmasını engelleyecek bir hamle yapmaya çalışır
       if (!_blockOpponentWin()) {
-        // Eğer ne kazanabileceği ne de rakibin kazanmasını engelleyebileceği bir hamle yoksa,
-        // stratejik bir hamle yapar
         _makeStrategicMove();
       }
     }
@@ -352,9 +350,40 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
       _resetBoard2();
     } else if (_checkDraw()) {
       _increaseBoardSize();
+    } else if (!_isXNext && _moveTimeInSeconds <= 0) {
+      // Süre bittiğinde ve insan oyuncu sıradaysa rakip kazanır ve diğer oyun başlar
+      String winner = _isXNext ? 'O' : 'X';
+      _updateScore(winner == 'X' ? 'O' : 'X');
+      _confettiController.play(); // Konfeti başlat
+      _resetBoard();
     } else if (!_isXNext) {
       _aiMove(); // Yapay zeka hamlesi
+    } else if (_teamXScore >= 3 || _teamOScore >= 3) {
+      _showGameOverDialog();
     }
+  }
+
+  void _showGameOverDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Game Over!'),
+          content: const Text('Good Games Have Fun :)'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const mainpage()),
+                );
+              },
+              child: const Text('➜'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _increaseBoardSize() {
