@@ -30,45 +30,59 @@ class mainpage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('XOX', style: TextStyle(color: Colors.black)),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.logout),
-            color: Colors.black,
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const HomePage()),
-              );
-            },
+    return Stack(
+      children: <Widget>[
+        // Arka plan resmi
+        Positioned.fill(
+          child: Image.asset(
+            "assets/images/XOX1.gif",
+            fit: BoxFit.cover,
           ),
-        ],
-      ),
-      backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            _buildProfileSection(),
-            const Spacer(),
-            _buildGameButtons(context),
-            const Spacer(flex: 2),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Image.asset(
-                "assets/images/XOX.png",
-                width: 70,
-                height: 70,
-              ),
-            ),
-          ],
         ),
-      ),
+        // Diğer widget'lar
+        Scaffold(
+          appBar: AppBar(
+            title: const Text('XOX', style: TextStyle(color: Colors.black)),
+            backgroundColor:
+                Colors.transparent, // Arka plana uyum sağlaması için
+            elevation: 0,
+            actions: <Widget>[
+              IconButton(
+                icon: const Icon(Icons.logout),
+                color: Colors.black,
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const HomePage()),
+                  );
+                },
+              ),
+            ],
+          ),
+          backgroundColor: Colors.transparent, // Arka plana uyum sağlaması için
+          body: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                _buildProfileSection(),
+                const Spacer(),
+                _buildGameButtons(context),
+                const Spacer(flex: 2),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Image.asset(
+                    "assets/images/XOX.png",
+                    width: 70,
+                    height: 70,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 

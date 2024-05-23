@@ -69,8 +69,8 @@ flutter:
   assets:
     - assets/images/XOX.png
     - assets/images/userprofil.jpg
-   
-
+    - assets/images/xoxgif.gif
+    - assets/images/XOX1.gif
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
