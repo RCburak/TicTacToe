@@ -1,5 +1,3 @@
-// ignore_for_file: use_super_parameters, library_private_types_in_public_api, unused_element
-
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -101,12 +99,249 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
   void _markCell(int row, int col) {
     if (_board[row][col] == '') {
       setState(() {
-        _board[row][col] = _isXNext ? '❌' : '⭕';
-        _isXNext = !_isXNext;
+        _board[row][col] = '❌'; // İnsan oyuncunun hamlesi
+        _isXNext =
+            false; // İnsan oyuncu oynamış oldu, sıra yapay zeka oyuncusunda
         _moveTimeInSeconds = 10; // Hamle yapıldığında zamanı sıfırla
       });
       _checkWinner();
     }
+  }
+
+  void _aiMove() {
+    // Öncelikli olarak, yapay zeka kazanabileceği bir hamle yapmaya çalışır
+    if (!_makeWinningMove()) {
+      // Sonrasında, rakibin kazanmasını engelleyecek bir hamle yapmaya çalışır
+      if (!_blockOpponentWin()) {
+        // Eğer ne kazanabileceği ne de rakibin kazanmasını engelleyebileceği bir hamle yoksa,
+        // stratejik bir hamle yapar
+        _makeStrategicMove();
+      }
+    }
+  }
+
+  bool _makeWinningMove() {
+    // Önce her satırı kontrol eder
+    for (int i = 0; i < _boardSize; i++) {
+      // Eğer iki aynı işaret ve bir boş hücre varsa, o boş hücreye kendi işaretini koyar
+      if (_board[i].where((cell) => cell == '⭕').length == 2 &&
+          _board[i].contains('')) {
+        int columnIndex = _board[i].indexOf('');
+        setState(() {
+          _board[i][columnIndex] = '⭕';
+          _isXNext = true;
+          _moveTimeInSeconds = 10;
+        });
+        _checkWinner();
+        return true;
+      }
+    }
+
+    // Sonra her sütunu kontrol eder
+    for (int j = 0; j < _boardSize; j++) {
+      // Eğer iki aynı işaret ve bir boş hücre varsa, o boş hücreye kendi işaretini koyar
+      if (_board.map((row) => row[j]).where((cell) => cell == '⭕').length ==
+              2 &&
+          _board.map((row) => row[j]).contains('')) {
+        int rowIndex = _board.map((row) => row[j]).toList().indexOf('');
+        setState(() {
+          _board[rowIndex][j] = '⭕';
+          _isXNext = true;
+          _moveTimeInSeconds = 10;
+        });
+        _checkWinner();
+        return true;
+      }
+    }
+
+    // Diagonal kazanma durumunu kontrol eder
+    if (_board[0][0] == '⭕' && _board[1][1] == '⭕' && _board[2][2] == '') {
+      setState(() {
+        _board[2][2] = '⭕';
+        _isXNext = true;
+        _moveTimeInSeconds = 10;
+      });
+      _checkWinner();
+      return true;
+    } else if (_board[0][0] == '⭕' &&
+        _board[1][1] == '' &&
+        _board[2][2] == '⭕') {
+      setState(() {
+        _board[1][1] = '⭕';
+        _isXNext = true;
+        _moveTimeInSeconds = 10;
+      });
+      _checkWinner();
+      return true;
+    } else if (_board[0][0] == '' &&
+        _board[1][1] == '⭕' &&
+        _board[2][2] == '⭕') {
+      setState(() {
+        _board[0][0] = '⭕';
+        _isXNext = true;
+        _moveTimeInSeconds = 10;
+      });
+      _checkWinner();
+      return true;
+    } else if (_board[0][2] == '⭕' &&
+        _board[1][1] == '⭕' &&
+        _board[2][0] == '') {
+      setState(() {
+        _board[2][0] = '⭕';
+        _isXNext = true;
+        _moveTimeInSeconds = 10;
+      });
+      _checkWinner();
+      return true;
+    } else if (_board[0][2] == '⭕' &&
+        _board[1][1] == '' &&
+        _board[2][0] == '⭕') {
+      setState(() {
+        _board[1][1] = '⭕';
+        _isXNext = true;
+        _moveTimeInSeconds = 10;
+      });
+      _checkWinner();
+      return true;
+    } else if (_board[0][2] == '' &&
+        _board[1][1] == '⭕' &&
+        _board[2][0] == '⭕') {
+      setState(() {
+        _board[0][2] = '⭕';
+        _isXNext = true;
+        _moveTimeInSeconds = 10;
+      });
+      _checkWinner();
+      return true;
+    }
+
+    return false;
+  }
+
+  bool _blockOpponentWin() {
+    // Önce her satırı kontrol eder
+    for (int i = 0; i < _boardSize; i++) {
+      // Eğer iki aynı işaret ve bir boş hücre varsa, o boş hücreye kendi işaretini koyar
+      if (_board[i].where((cell) => cell == '❌').length == 2 &&
+          _board[i].contains('')) {
+        int columnIndex = _board[i].indexOf('');
+        setState(() {
+          _board[i][columnIndex] = '⭕';
+          _isXNext = true;
+          _moveTimeInSeconds = 10;
+        });
+        _checkWinner();
+        return true;
+      }
+    }
+
+    // Sonra her sütunu kontrol eder
+    for (int j = 0; j < _boardSize; j++) {
+      // Eğer iki aynı işaret ve bir boş hücre varsa, o boş hücreye kendi işaretini koyar
+      if (_board.map((row) => row[j]).where((cell) => cell == '❌').length ==
+              2 &&
+          _board.map((row) => row[j]).contains('')) {
+        int rowIndex = _board.map((row) => row[j]).toList().indexOf('');
+        setState(() {
+          _board[rowIndex][j] = '⭕';
+          _isXNext = true;
+          _moveTimeInSeconds = 10;
+        });
+        _checkWinner();
+        return true;
+      }
+    }
+
+    // Diagonal kazanma durumunu kontrol eder
+    if (_board[0][0] == '❌' && _board[1][1] == '❌' && _board[2][2] == '') {
+      setState(() {
+        _board[2][2] = '⭕';
+        _isXNext = true;
+        _moveTimeInSeconds = 10;
+      });
+      _checkWinner();
+      return true;
+    } else if (_board[0][0] == '❌' &&
+        _board[1][1] == '' &&
+        _board[2][2] == '❌') {
+      setState(() {
+        _board[1][1] = '⭕';
+        _isXNext = true;
+        _moveTimeInSeconds = 10;
+      });
+      _checkWinner();
+      return true;
+    } else if (_board[0][0] == '' &&
+        _board[1][1] == '❌' &&
+        _board[2][2] == '❌') {
+      setState(() {
+        _board[0][0] = '⭕';
+        _isXNext = true;
+        _moveTimeInSeconds = 10;
+      });
+      _checkWinner();
+      return true;
+    } else if (_board[0][2] == '❌' &&
+        _board[1][1] == '❌' &&
+        _board[2][0] == '') {
+      setState(() {
+        _board[2][0] = '⭕';
+        _isXNext = true;
+        _moveTimeInSeconds = 10;
+      });
+      _checkWinner();
+      return true;
+    } else if (_board[0][2] == '❌' &&
+        _board[1][1] == '' &&
+        _board[2][0] == '❌') {
+      setState(() {
+        _board[1][1] = '⭕';
+        _isXNext = true;
+        _moveTimeInSeconds = 10;
+      });
+      _checkWinner();
+      return true;
+    } else if (_board[0][2] == '' &&
+        _board[1][1] == '❌' &&
+        _board[2][0] == '❌') {
+      setState(() {
+        _board[0][2] = '⭕';
+        _isXNext = true;
+        _moveTimeInSeconds = 10;
+      });
+      _checkWinner();
+      return true;
+    }
+
+    return false;
+  }
+
+  void _makeStrategicMove() {
+    // Basit bir strateji: Orta hücreye işaret koyar, eğer müsaitse.
+    if (_board[_boardSize ~/ 2][_boardSize ~/ 2] == '') {
+      setState(() {
+        _board[_boardSize ~/ 2][_boardSize ~/ 2] = '⭕';
+        _isXNext = true;
+        _moveTimeInSeconds = 10;
+      });
+      _checkWinner();
+      return;
+    }
+
+    // Rastgele boş bir hücre seçer ve işaret koyar.
+    Random random = Random();
+    int row, col;
+    do {
+      row = random.nextInt(_boardSize);
+      col = random.nextInt(_boardSize);
+    } while (_board[row][col] != '');
+
+    setState(() {
+      _board[row][col] = '⭕';
+      _isXNext = true;
+      _moveTimeInSeconds = 10;
+    });
+    _checkWinner();
   }
 
   void _checkWinner() {
@@ -117,6 +352,8 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
       _resetBoard2();
     } else if (_checkDraw()) {
       _increaseBoardSize();
+    } else if (!_isXNext) {
+      _aiMove(); // Yapay zeka hamlesi
     }
   }
 
