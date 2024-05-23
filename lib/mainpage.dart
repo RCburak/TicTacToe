@@ -89,7 +89,7 @@ class mainpage extends StatelessWidget {
                   alignment: Alignment.bottomLeft,
                   child: IconButton(
                     icon: const Icon(Icons.settings),
-                    color: Colors.grey.shade200,
+                    color: const Color.fromARGB(255, 233, 244, 30),
                     iconSize: 40,
                     onPressed: () {
                       _showSettingsSheet(context);
