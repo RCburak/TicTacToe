@@ -25,9 +25,16 @@ class MainPage extends StatelessWidget {
   }
 }
 
-class mainpage extends StatelessWidget {
+class mainpage extends StatefulWidget {
+  // Convert to StatefulWidget to manage state
   const mainpage({Key? key}) : super(key: key);
 
+  @override
+  // ignore: library_private_types_in_public_api
+  _mainpageState createState() => _mainpageState();
+}
+
+class _mainpageState extends State<mainpage> {
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -71,7 +78,6 @@ class mainpage extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    _buildProfileSection(),
                     const Spacer(),
                     _buildGameButtons(context),
                     const Spacer(flex: 2),
@@ -85,85 +91,11 @@ class mainpage extends StatelessWidget {
                     ),
                   ],
                 ),
-                Align(
-                  alignment: Alignment.bottomLeft,
-                  child: IconButton(
-                    icon: const Icon(Icons.settings),
-                    color: const Color.fromARGB(255, 233, 244, 30),
-                    iconSize: 40,
-                    onPressed: () {
-                      _showSettingsSheet(context);
-                    },
-                  ),
-                ),
               ],
             ),
           ),
         ),
       ],
-    );
-  }
-
-  void _showSettingsSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          height: 200,
-          decoration: BoxDecoration(
-            color: Colors.grey.shade200,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-          ),
-          child: Center(
-            child: IconButton(
-              icon: const Icon(Icons.music_note),
-              iconSize: 50,
-              onPressed: () {
-                // Müzik simgeli butona tıklanınca yapılacaklar
-              },
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildProfileSection() {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade200,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: <Widget>[
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8.0),
-            child: Image.asset(
-              "assets/images/userprofil.jpg",
-              width: 80,
-              height: 80,
-            ),
-          ),
-          const SizedBox(width: 16),
-          const Row(
-            children: <Widget>[
-              Icon(Icons.star, color: Colors.yellow),
-              SizedBox(width: 8),
-              Text(
-                '1000',
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 

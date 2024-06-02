@@ -1,5 +1,6 @@
 // ignore_for_file: use_super_parameters, library_private_types_in_public_api
 
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
@@ -35,6 +36,8 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
   int _teamOScore = 0;
   int _boardSize = 3;
   late ConfettiController _confettiController;
+  Timer? _timer;
+  int _moveTimeInSeconds = 10;
 
   @override
   void initState() {
@@ -42,11 +45,13 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
     _initializeBoard();
     _confettiController =
         ConfettiController(duration: const Duration(seconds: 3));
+    _startTimer();
   }
 
   @override
   void dispose() {
     _confettiController.dispose();
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -59,6 +64,8 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
     setState(() {
       _board = List.generate(_boardSize, (_) => List.filled(_boardSize, ''));
       _isXNext = true;
+      _moveTimeInSeconds = 10;
+      _startTimer();
     });
   }
 
@@ -69,6 +76,8 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
       }
       _board = List.generate(_boardSize, (_) => List.filled(_boardSize, ''));
       _isXNext = true;
+      _moveTimeInSeconds = 10;
+      _startTimer();
     });
   }
 
@@ -84,6 +93,7 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
       setState(() {
         _board[row][col] = _isXNext ? '❌' : '⭕';
         _isXNext = !_isXNext;
+        _moveTimeInSeconds = 10;
       });
       _checkWinner();
     }
@@ -174,6 +184,20 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
     }
   }
 
+  void _startTimer() {
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_moveTimeInSeconds > 0) {
+          _moveTimeInSeconds--;
+        } else {
+          _isXNext = !_isXNext;
+          _moveTimeInSeconds = 10;
+        }
+      });
+    });
+  }
+
   Widget buildBoard() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -209,6 +233,13 @@ class _TicTacToeBoardState extends State<TicTacToeBoard> {
               ),
             );
           },
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            'Time left: $_moveTimeInSeconds seconds',
+            style: const TextStyle(fontSize: 20.0),
+          ),
         ),
       ],
     );
